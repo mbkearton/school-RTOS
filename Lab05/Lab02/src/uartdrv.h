@@ -8,6 +8,8 @@
 #ifndef UARTDRV_H_
 #define UARTDRV_H_
 
+#include <queue.h>
+
 #define EDBG_UART                        UART0
 #define UART_SERIAL_BAUDRATE             115200ul
 #define UART_SERIAL_CHAR_LENGTH          US_MR_CHRL_8_BIT
@@ -17,9 +19,10 @@
 #define UART_MCK_DIV_MIN_FACTOR          1
 #define UART_MCK_DIV_MAX_FACTOR          65535
 
+QueueHandle_t qhUART_RX;
+
 uint8_t initUART		(Uart* pUart);
 void	UARTPutStr		(Uart* pUart, char* data, uint8_t len);
 void	UARTPutC		(Uart* pUart, char data);
-void	UART0_Handler	(void);
 
 #endif /* UARTDRV_H_ */

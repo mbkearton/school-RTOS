@@ -6,6 +6,7 @@
  */ 
 #include <stdint.h>
 #include <asf.h>
+#include <FreeRTOS.h>
 #include "uartdrv.h"
 
 // 
@@ -72,7 +73,8 @@ UARTPutC (Uart * pUart, char data)
 	{
 		vTaskDelay(xDelay);
 	}
-	pUart->UART_THR = data;
+	if (data != 0)
+		pUart->UART_THR = data;
 }
 
 void
@@ -84,7 +86,7 @@ UARTPutStr (Uart * pUart, char * data, uint8_t len)
 	}
 }
 
-void UART0_Handler()
+void UART0_Handler (void)
 {
 	uint8_t data = '\0';
 	uint32_t uiStatus = EDBG_UART->UART_SR;
@@ -94,7 +96,7 @@ void UART0_Handler()
 	{
 		data = (uint8_t) EDBG_UART->UART_RHR;
 		
-		xQueueSendToBackFromISR();
+		xQueueSendToBackFromISR(qhUART_RX,  (void*) &data, &xHigherPriorityTaskWoken);
 		
 	}
 	// Send Queue message to task

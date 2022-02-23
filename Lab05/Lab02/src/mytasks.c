@@ -16,7 +16,7 @@
 #define DELTADELAY	50		// the absolute value of the minimum change in delay
 
 // helper function prototype
-enum ledSelect getNextLED (enum ledSelect);
+uint8_t getLED (char);
 
 // toggles an LED on and off every 0.5 second
 // heartbeat task created up to four times: 
@@ -46,46 +46,24 @@ taskHeartbeat (void* pvParameters)
 void 
 taskBlinkLED (void* pvParameters)
 {
-	/* Block for 500ms. */
-	TickType_t xDelay = 500;	// SystemCoreClock = CHIP_FREQ_MAINCK_RC_4MHZ = 4MHz
+	const TickType_t xDelay = 10 / portTICK_PERIOD_MS;	// SystemCoreClock = CHIP_FREQ_MAINCK_RC_4MHZ = 4MHz
 
 	// casting sent parameter back to what it was originally
 	const struct DataBlinkLED data = *(struct DataBlinkLED*) pvParameters;
 
-	char uart_message[50] = "\0";
-	enum ledQueueMessage message = 0;	// preparing mailbox...
+	char message = '\0';
+	uint8_t led_num;
 
 	while(FOREVER)
 	{
-		//
-		strcpy(uart_message, data.uart_led_message[0]);
-		xQueueSendToBack(data.uart_queue_handle, (void*) &uart_message, (TickType_t) 10);
-		
 		if (uxQueueMessagesWaiting(data.led_queue_handle))
 		{			
 			// retrieving message from mailbox
 			xQueueReceive(data.led_queue_handle, &message, 0);
-			
-			// setting delay value appropriately
-			// depending on message and current delay value
-			if (message == INCREMENT && xDelay < MAXDELAY)
-			{
-				xDelay += DELTADELAY;
-			}
-			else if (message == DECREMENT && xDelay > MINDELAY)
-			{
-				xDelay -= DELTADELAY;
-			}
+			led_num = getLED(message);
+			toggleLED(led_num);				// toggle LED state
 		}
-		// toggle LED and wait for delay period
-		toggleLED(data.led_number);				// toggle LED state
-		
-		//
-		strcpy(uart_message, data.uart_led_message[1]);
-		xQueueSendToBack(data.uart_queue_handle, (void*) &uart_message, (TickType_t) 10);
-		
-		//
-		vTaskDelay( xDelay / portTICK_PERIOD_MS);	// then wait 0.5
+		vTaskDelay(xDelay);
 	}
 }
 
@@ -98,8 +76,7 @@ taskUART_TX (void* pvParameters)
 	
 	while (FOREVER)
 	{	
-		// 
-		if (xQueueReceive(data.uart_queue_handle, &message, portMAX_DELAY) == pdTRUE)
+		if (xQueueReceive(data.uart_tx_queue_handle, &message, portMAX_DELAY) == pdTRUE)
 		{
 			UARTPutStr(EDBG_UART, message, strlen(message));
 		}
@@ -113,50 +90,60 @@ taskUART_RX (void* pvParameters)
 	const struct UARTData data = *(struct UARTData*) pvParameters;
 	
 	char rx_message;
+	char tx_message[50];
 	
 	while (FOREVER)
 	{
-		// 
-		if (xQueueReceive(data.uart_queue_handle, &rx_message, portMAX_DELAY) == pdTRUE)
+		if (xQueueReceive(data.uart_rx_queue_handle, &rx_message, portMAX_DELAY) == pdTRUE)
 		{
 			switch (rx_message)
 			{
+				case '\r':
+				tx_message[0] = '\r';
+				tx_message[1] = '\n';
+				tx_message[2] = '\0';
+				break;
 				case '1':
 				case '2':
 				case '3':
+				tx_message[0] = rx_message;
+				tx_message[1] = '\0';
+				xQueueSendToBack(data.led_queue_handle, (void*) &rx_message, (TickType_t) 10);
+				break;
 				case 'u':
-					xQueueSendToBack(data.led_queue_handle, (void*) &rx_message, (TickType_t) 10);
-					break;
+				strcpy(tx_message, "Michael Kearton");
+				break;
 				default:
-				
-					break;
+				tx_message[0] = rx_message;
+				tx_message[1] = '\0';
+				break;
 			}
-			if
-			xQueueSendToBack();
+			
+			xQueueSendToBack(data.uart_tx_queue_handle, (void*) &tx_message, (TickType_t) 10);
 		}
 	}
 }
 
 //
-enum ledSelect
-getNextLED (enum ledSelect current)
+uint8_t
+getLED (char led)
 {
-	enum ledSelect next = 0;
+	uint8_t led_num = 0;
 	
 	// returns next LED given current, rotating through
-	switch (current)
+	switch (led)
 	{
-		case LED1:
-			next = LED2;
+		case '1':
+			led_num = 1;
 			break;
-		case LED2:
-			next = LED3;
+		case '2':
+			led_num = 2;
 			break;
-		case LED3:
-			next = LED1;
+		case '3':
+			led_num = 3;
 			break;
 		default:
 			break;
 	}
-	return next;
+	return led_num;
 }

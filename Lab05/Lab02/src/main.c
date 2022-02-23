@@ -56,18 +56,12 @@ int main (void)
 	
 	QueueHandle_t qhLED = NULL;		// LED Blink Queue Handle
 	QueueHandle_t qhUART_TX = NULL; // UART TX Queue Handle
-	QueueHandle_t qhUART_RX = NULL; // UART RX Queue Handle
+	//QueueHandle_t qhUART_RX = NULL; // UART RX Queue Handle
 	
 	// Data for LED Blink task
-	struct DataBlinkLED led_blink_data = 
-	{
-		1, 
-		NULL, 
-		NULL, 
-		{"LED 1 STARTING\n", "LED 1 BLOCKING\n"}
-	};
-	struct UARTData uart_data_tx = {NULL, NULL}; // data for UART TX task
-	struct UARTData uart_data_rx = {NULL, NULL}; // data for UART RX task
+	struct DataBlinkLED led_blink_data = {NULL};
+	struct UARTData uart_data_tx = {NULL, NULL, NULL}; // data for UART TX task
+	struct UARTData uart_data_rx = {NULL, NULL, NULL}; // data for UART RX task
 	
 	//=========================================================================
 	// BLINKING TASKS -- creation of all tasks responsible for blinking 
@@ -93,9 +87,12 @@ int main (void)
 	// starting UART queues
 	qhUART_TX = xQueueCreate(20, 50);
 	qhUART_RX = xQueueCreate(20, 1);
-	// connecting tasks' data to appropriate queue handles
-	uart_data_tx.uart_queue_handle = qhUART_TX;
-	uart_data_rx.uart_queue_handle = qhUART_RX;
+	// TX Task only need TX Queue
+	uart_data_tx.uart_tx_queue_handle = qhUART_TX;
+	// RX Task needs TX, RX, and LED queues
+	uart_data_rx.uart_tx_queue_handle = qhUART_TX;
+	uart_data_rx.uart_rx_queue_handle = qhUART_RX;
+	uart_data_rx.led_queue_handle = qhLED;
 
 
 	//=========================================================================

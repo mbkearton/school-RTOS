@@ -30,7 +30,8 @@ struct DataBlinkLED
 
 struct UARTData
 {	// struct to hold data used by taskUART
-	QueueHandle_t uart_queue_handle;
+	QueueHandle_t uart_tx_queue_handle;
+	QueueHandle_t uart_rx_queue_handle;
 	QueueHandle_t led_queue_handle;
 };
 
