@@ -1,3 +1,23 @@
+/******************************************************************************
+Author:			Michael Kearton
+File Name:		main.c
+Date Created:	01/18/2022
+******************************************************************************
+Assignment:		Lab01
+
+Overview:		This program starts up a task using the FreeRTOS API. Once the
+			board has been configured following startup and the pins are set
+			appropriately, the onboar LED will turn on, stay on for half a 
+			second, and then turn off and stay off for half a second. This 
+			behavior will repeat indefinitely, serving as a sort of "canary
+			in the coal mine," effectively providing a simple form of visual
+			debugging. This will be beneficial during later assignments 
+			requiring more tasks and greater scheduling complexity.
+			
+
+Input:		N/A
+Output:		Onboard LED will blink on and off, toggling every 0.5 seconds.
+******************************************************************************/
 //system includes
 #include <asf.h>
 
@@ -72,6 +92,9 @@ static void prvInitialiseHeap( )
 
        vPortDefineHeapRegions( xHeapRegions );
 }
+
+// initializes and configures various required
+// hardware registers and pins
 static void prvMiscInitialisation( void )
 {
        /* Initialize the SAM system */

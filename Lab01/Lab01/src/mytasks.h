@@ -1,15 +1,14 @@
-/*
- * mytasks.h
- *
- * Created: 1/18/2022 11:36:05 AM
- *  Author: mbkea
- */ 
-
+/******************************************************************************
+Author:			Michael Kearton
+File Name:		mytasks.h
+Date Created:	01/18/2022
+******************************************************************************/
 
 #ifndef MYTASKS_H_
 #define MYTASKS_H_
 
-void myButtonTask(void * pvParamaters);
-void vToggleLED(void);
+#define FOREVER	1	// used to continue looping tasks 
+
+void myButtonTask	(void* pvParamaters);
 
 #endif /* MYTASKS_H_ */
