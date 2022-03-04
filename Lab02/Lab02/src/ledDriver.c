@@ -9,7 +9,9 @@
 
 #include "ledDriver.h"
 #include "OITExpansionBoardDefines.h"
-
+/************************************************************
+	LED Driver Variables	
+*************************************************************/
 uint8_t SUCCESS = 1;
 uint8_t FAILURE = 0;
 
@@ -20,10 +22,8 @@ uint8_t decLED [] =
 	EXT1_LED_2_PIN,
 	EXT1_LED_3_PIN
 };
-
 /************************************************************
-	LED Driver Functions	
-
+	LED Driver Function Definitions
 *************************************************************/
 void initializeLEDDriver(void)
 {
@@ -47,13 +47,14 @@ uint8_t setLED(uint8_t uiLedNum, uint8_t uiLedValue)
 {
 	ioport_set_pin_level(decLED[uiLedNum], uiLedValue);
 	
-	return SUCCESS; // dummy return
+	return SUCCESS; // dummy return, not error safe
 }
 
-// 
+// inverts the state of the LED referenced by the value passed in after it has
+// been "decoded"
 uint8_t toggleLED(uint8_t uiLedNum)
 {
 	ioport_set_pin_level(decLED[uiLedNum], !ioport_get_pin_level(decLED[uiLedNum]));
 
-	return SUCCESS; // dummy return
+	return SUCCESS; // dummy return, not error safe
 }

@@ -1,3 +1,9 @@
+/******************************************************************************
+Author:			Michael Kearton
+File Name:		mytasks.c
+Date Created:	01/18/2022
+Modified:		01/25/2022 -- altered to facilitate Lab02
+******************************************************************************/
 #include <asf.h>
 
 #include <FreeRTOS.h>
@@ -8,13 +14,18 @@
 #include "ledDriver.h"
 #include "FreeRTOSConfig.h"
 
-// helper functions
+/************************************************************
+	Task Helper Function Declarations
+*************************************************************/
+// helper functions process each button pressed and respond appropriately
 void processEXT_SW1 (void);
 void processEXT_SW2 (void);
 void processEXT_SW3 (void);
 
-// task variables
-uint8_t ledCount = 0; // number of active heartbeat tasks (not including main)
+/************************************************************
+	Task Variables
+*************************************************************/
+uint8_t ledCount = 0; // number of active heartbeat tasks (not including onboard LED)
 uint8_t suspendStatus = 0; // flag referenced by SW_8 (button 3)
 TaskHandle_t thLED1Heartbeat = NULL; // task handles referenced for task control
 TaskHandle_t thLED2Heartbeat = NULL; //	used to delete, suspend and resume respective
@@ -23,11 +34,13 @@ uint8_t led1 = 1; // shorthand for extension board LEDs
 uint8_t led2 = 2;
 uint8_t led3 = 3;
 
-// toggles an LED on and off every 0.5 second
-// heartbeat task created up to four times: 
-//     *    1 onboard LED uncontrolled
-//     *	3 extension board LEDs controlled by button functions
-void taskHeartbeat( void * pvParameters )
+/************************************************************
+	Task Function Definitions
+*************************************************************/
+// (1) One argument: references LED to be toggled
+// periodically toggles LED referenced by argument passed in, specifying which
+// LED should be blinking. a unique heartbeat task is created for each LED.
+void taskHeartbeat (void* pvParameters)
 {
 	/* Block for 500ms. */
 	const TickType_t xDelay = 500 / portTICK_PERIOD_MS;	// SystemCoreClock = CHIP_FREQ_MAINCK_RC_4MHZ = 4MHz
@@ -37,42 +50,49 @@ void taskHeartbeat( void * pvParameters )
 
 	while(FOREVER)
 	{	// actual task
-		toggleLED(*ledNum);		// toggle LED state
+		toggleLED(*ledNum);		// toggle state of LED referenced by ledNum
 		vTaskDelay( xDelay );	// then wait 0.5 
-
 	}
 }
 
-//
-//
-//
-void taskSystemControl(void * pvParameters )
+// (0) Zero Arguments.
+// polls the state of the three buttons and call appropriate helper function
+// to respond with the necessary system call:
+// 1.	add a blinking LED to the board (up to three)
+// 2.	remove a blinking LED from the board
+// 3.	suspend the state of all currently active blinking LEDs
+void taskSystemControl (void* pvParameters)
 {
 	const TickType_t xDelay = 100 / portTICK_PERIOD_MS;
 
 	while (FOREVER)
 	{	// actual task
+		// NOTE: no debouncing implemented here
 		if (readButton(FIRST))
 		{
-			processEXT_SW1();
+			processEXT_SW1();	// add LED
 		}
 		
 		if (readButton(SECOND))
 		{
-			processEXT_SW2();
+			processEXT_SW2();	// remove LED
 		}
 		
 		if (readButton(THIRD))
 		{
-			processEXT_SW3();
+			processEXT_SW3();	// suspend LEDs
 		}
 		vTaskDelay(xDelay);
 	}
 }
 
-// processes SW1 button press and takes appropriate action;
-// I realize that "process____" probably isn't the best
-// naming convention
+/************************************************************
+	Task Helper Function Definitions
+*************************************************************/
+// processes SW1 button press and creates a heartbeat task for the next 
+// LED, up to three. Only creates the task if it doesn't already exist.
+// NOTE: I realize that "process____" probably isn't the best
+// naming convention to be used here
 void processEXT_SW1 (void)
 {
 	// only increase number of heart beat tasks if
@@ -116,9 +136,9 @@ void processEXT_SW1 (void)
 	}
 }
 
-//
-//
-//
+// process SW2 button press an deletes the highest numbered expansion board LED 
+// heartbeat task, never deleting the onboard heartbeat task. must also set the
+// relevant LED state to zero
 void processEXT_SW2 (void)
 {
 	switch (ledCount)
@@ -141,12 +161,15 @@ void processEXT_SW2 (void)
 		default:
 			break;
 	}
+	// decrement the LED count prior to exit, only if there is at least one LED
 	if (ledCount) ledCount -= 1;
 }
 
-//
-//
-//
+// suspends all heartbeat tasks -- except for the onboard heartbeat task.
+// only suspends a task it actually exists.
+// if tasks have already been suspended, then this function will resume
+// all of those heartbeat tasks so long as they exist and the suspendStatus
+// flag high.
 void processEXT_SW3 (void)
 {
 	if (suspendStatus == 0)

@@ -1,3 +1,17 @@
+/******************************************************************************
+Author:			Michael Kearton
+File Name:		main.c
+Date Created:	01/18/2022
+Modified:		01/25/2022 -- altered to facilitate Lab02
+******************************************************************************
+Assignment:		Lab02
+
+Overview:		This 
+			
+
+Input:		
+Output:		
+******************************************************************************/
 //system includes
 #include <asf.h>
 
@@ -39,11 +53,10 @@ uint8_t onboard = 0;
 
 /************************************************************
 	main: LED Control Application	
-
 *************************************************************/
 int main (void)
 {
-	// Initialize The Board
+	// Initialize The Board, including the OIT Expansion Board
 	prvMiscInitialisation();
 	
 	// establishes heartbeat task for onboard LED;
@@ -53,16 +66,16 @@ int main (void)
 		configMINIMAL_STACK_SIZE,
 		(void *) &onboard,			// reference to onboard LED shorthand
 		1,
-		NULL);						// no task handle necessary, should always run
+		NULL);						// no task handle, should always run
 	
 	// establishes system control task for extension board LEDs;
 	// no args passed -- necessary vars already w/in mytasks.c
 	xTaskCreate(taskSystemControl,
 		"TaskSystemControl",
 		configMINIMAL_STACK_SIZE,
-		NULL,
+		NULL,						// no args, required variables in mytasks.c
 		1,
-		NULL);
+		NULL);						// no task handle, should always run
 	
 	// Start The Scheduler
 	vTaskStartScheduler();
@@ -101,9 +114,11 @@ static void prvMiscInitialisation( void )
        prvInitialiseHeap();
        pmc_enable_periph_clk(ID_PIOA);
        pmc_enable_periph_clk(ID_PIOB);
+	   
+	   // initializes the GPIO ports used to interface w/ expansion board
 	   OITExpansionBoardInit();
-	   initializeLEDDriver();		// dummy
-	   initializeButtonDriver();	// dummy
+	   //initializeLEDDriver();		// dummy, if needed in future
+	   //initializeButtonDriver();	// dummy
 }
 
 void vAssertCalled( const char *pcFile, uint32_t ulLine )

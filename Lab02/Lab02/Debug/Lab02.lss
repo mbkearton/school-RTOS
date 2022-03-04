@@ -4699,10 +4699,10 @@ uint8_t toggleLED(uint8_t uiLedNum)
   4020d8:	2000000c 	.word	0x2000000c
 
 004020dc <taskHeartbeat>:
-// toggles an LED on and off every 0.5 second
-// heartbeat task created up to four times: 
-//     *    1 onboard LED uncontrolled
-//     *	3 extension board LEDs controlled by button functions
+uint8_t led2 = 2;
+uint8_t led3 = 3;
+
+//
 void taskHeartbeat( void * pvParameters )
 {
   4020dc:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
@@ -4712,12 +4712,12 @@ void taskHeartbeat( void * pvParameters )
 
 	while(FOREVER)
 	{	// actual task
-		toggleLED(*ledNum);		// toggle LED state
+		toggleLED(*ledNum);		// toggle state of LED referenced by ledNum
   4020e0:	4e04      	ldr	r6, [pc, #16]	; (4020f4 <taskHeartbeat+0x18>)
 		vTaskDelay( xDelay );	// then wait 0.5 
   4020e2:	f44f 75fa 	mov.w	r5, #500	; 0x1f4
   4020e6:	4c04      	ldr	r4, [pc, #16]	; (4020f8 <taskHeartbeat+0x1c>)
-		toggleLED(*ledNum);		// toggle LED state
+		toggleLED(*ledNum);		// toggle state of LED referenced by ledNum
   4020e8:	7838      	ldrb	r0, [r7, #0]
   4020ea:	47b0      	blx	r6
 		vTaskDelay( xDelay );	// then wait 0.5 
@@ -4915,9 +4915,8 @@ void processEXT_SW2 (void)
   402224:	20000610 	.word	0x20000610
 
 00402228 <processEXT_SW3>:
+}
 
-//
-//
 //
 void processEXT_SW3 (void)
 {
@@ -6017,9 +6016,9 @@ void system_init_flash( uint32_t ul_clk )
   40285c:	04000300 	.word	0x04000300
 
 00402860 <main>:
+
 /************************************************************
 	main: LED Control Application	
-
 *************************************************************/
 int main (void)
 {
@@ -6171,7 +6170,7 @@ void vApplicationMallocFailedHook( void )
        timers, and semaphores.  The size of the FreeRTOS heap is set by the
        configTOTAL_HEAP_SIZE configuration constant in FreeRTOSConfig.h. */
        vAssertCalled( __FILE__, __LINE__ );
-  40294e:	2184      	movs	r1, #132	; 0x84
+  40294e:	2191      	movs	r1, #145	; 0x91
   402950:	4801      	ldr	r0, [pc, #4]	; (402958 <vApplicationMallocFailedHook+0xc>)
   402952:	4b02      	ldr	r3, [pc, #8]	; (40295c <vApplicationMallocFailedHook+0x10>)
   402954:	4798      	blx	r3

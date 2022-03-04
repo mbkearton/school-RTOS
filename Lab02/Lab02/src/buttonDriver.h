@@ -12,7 +12,7 @@
 #define SECOND	1
 #define THIRD	2
 
-void initializeButtonDriver(void);		// dummy
-uint8_t readButton(uint8_t uiButNum);
+void	initializeButtonDriver (void);	  // dummy
+uint8_t readButton			   (uint8_t); // reads the state of the button referenced by arg
 
 #endif /* BUTTONDRIVER_H_ */
