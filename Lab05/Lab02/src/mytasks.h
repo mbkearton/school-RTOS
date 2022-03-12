@@ -35,12 +35,15 @@ struct UARTData
 	QueueHandle_t led_queue_handle;
 };
 
+struct DataButtons
+{
+	QueueHandle_t uart_tx_queue_handle;
+};
+
 void taskHeartbeat			(void*);
 void taskBlinkLED			(void*);
-void taskBlinkLED_alt		(void*);
-void taskToggleSelectLED	(void*);
-void taskSystemControl		(void*);
 void taskUART_TX			(void*);
 void taskUART_RX			(void*);
+void taskButtons			(void*);
 
 #endif /* MYTASKS_H_ */

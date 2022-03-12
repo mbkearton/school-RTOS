@@ -62,6 +62,7 @@ int main (void)
 	struct DataBlinkLED led_blink_data = {NULL};
 	struct UARTData uart_data_tx = {NULL, NULL, NULL}; // data for UART TX task
 	struct UARTData uart_data_rx = {NULL, NULL, NULL}; // data for UART RX task
+	struct DataButtons buttons_data = {NULL};
 	
 	//=========================================================================
 	// BLINKING TASKS -- creation of all tasks responsible for blinking 
@@ -93,10 +94,11 @@ int main (void)
 	uart_data_rx.uart_tx_queue_handle = qhUART_TX;
 	uart_data_rx.uart_rx_queue_handle = qhUART_RX;
 	uart_data_rx.led_queue_handle = qhLED;
-
+	// Buttons task only needs TX Queue
+	buttons_data.uart_tx_queue_handle = qhUART_TX;
 
 	//=========================================================================
-	// SYSTEM CONTROL TASKS -- Creation of all three main control tasks
+	// SYSTEM CONTROL TASKS -- Creation of all main control tasks
 	//=========================================================================
 	xTaskCreate(taskUART_TX,
 		"TaskUART_TX",
@@ -120,6 +122,14 @@ int main (void)
 		(void *) &led_blink_data,
 		2,
 		NULL);
+		
+	//
+	xTaskCreate(taskButtons,
+		"TaskButtons",
+		configMINIMAL_STACK_SIZE,
+		(void *) &buttons_data,
+		2,							
+		&thButtons);
 	
 	// Start The Scheduler
 	vTaskStartScheduler();
@@ -160,6 +170,7 @@ static void prvMiscInitialisation( void )
        pmc_enable_periph_clk(ID_PIOB);
 	   OITExpansionBoardInit();
 	   initUART(EDBG_UART);
+	   initializeButtonDriver();
 }
 
 void vAssertCalled( const char *pcFile, uint32_t ulLine )

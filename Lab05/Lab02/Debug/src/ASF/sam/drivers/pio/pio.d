@@ -1,4 +1,5 @@
-src/buttonDriver.d src/buttonDriver.o: ../src/buttonDriver.c ../src/asf.h \
+src/ASF/sam/drivers/pio/pio.d src/ASF/sam/drivers/pio/pio.o: \
+ ../src/ASF/sam/drivers/pio/pio.c ../src/ASF/sam/drivers/pio/pio.h \
  ../src/ASF/sam/utils/compiler.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\lib\gcc\arm-none-eabi\6.3.1\include\stddef.h \
  ../src/ASF/common/utils/parts.h \
@@ -122,30 +123,9 @@ src/buttonDriver.d src/buttonDriver.o: ../src/buttonDriver.c ../src/asf.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\machine\stdlib.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\alloca.h \
  ../src/ASF/common/utils/interrupt.h \
- ../src/ASF/common/utils/interrupt/interrupt_sam_nvic.h \
- ../src/ASF/sam/utils/status_codes.h ../src/ASF/common/boards/board.h \
- ../src/ASF/sam/boards/sam4e_xplained_pro/sam4e_xplained_pro.h \
- ../src/ASF/sam/utils/cmsis/sam4e/source/templates/exceptions.h \
- ../src/ASF/common/services/ioport/ioport.h \
- ../src/ASF/common/services/ioport/sam/ioport_pio.h \
- ../src/ASF/common/services/clock/sysclk.h ../src/config/conf_clock.h \
- ../src/ASF/common/services/clock/sam4e/sysclk.h \
- ../src/ASF/common/services/clock/osc.h \
- ../src/ASF/common/services/clock/sam4e/osc.h \
- ../src/ASF/sam/drivers/pmc/pmc.h ../src/ASF/common/services/clock/pll.h \
- ../src/ASF/common/services/clock/sam4e/pll.h \
- ../src/ASF/sam/drivers/pio/pio.h ../src/ASF/sam/drivers/pmc/sleep.h \
- ../src/ASF/sam/utils/fpu/fpu.h \
- ../src/ASF/sam/boards/sam4e_xplained_pro/led.h \
- ../src/ASF/sam/drivers/pio/pio_handler.h ../src/buttonDriver.h \
- ../src/FreeRTOS/include/FreeRTOS.h ../src/FreeRTOSConfig.h \
- ../src/FreeRTOS/include/projdefs.h ../src/FreeRTOS/include/portable.h \
- ../src/FreeRTOS/include/deprecated_definitions.h \
- ../src/FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h \
- ../src/FreeRTOS/include/mpu_wrappers.h ../src/FreeRTOS/include/task.h \
- ../src/FreeRTOS/include/list.h ../src/OITExpansionBoardDefines.h
+ ../src/ASF/common/utils/interrupt/interrupt_sam_nvic.h
 
-../src/asf.h:
+../src/ASF/sam/drivers/pio/pio.h:
 
 ../src/ASF/sam/utils/compiler.h:
 
@@ -394,63 +374,3 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 ../src/ASF/common/utils/interrupt.h:
 
 ../src/ASF/common/utils/interrupt/interrupt_sam_nvic.h:
-
-../src/ASF/sam/utils/status_codes.h:
-
-../src/ASF/common/boards/board.h:
-
-../src/ASF/sam/boards/sam4e_xplained_pro/sam4e_xplained_pro.h:
-
-../src/ASF/sam/utils/cmsis/sam4e/source/templates/exceptions.h:
-
-../src/ASF/common/services/ioport/ioport.h:
-
-../src/ASF/common/services/ioport/sam/ioport_pio.h:
-
-../src/ASF/common/services/clock/sysclk.h:
-
-../src/config/conf_clock.h:
-
-../src/ASF/common/services/clock/sam4e/sysclk.h:
-
-../src/ASF/common/services/clock/osc.h:
-
-../src/ASF/common/services/clock/sam4e/osc.h:
-
-../src/ASF/sam/drivers/pmc/pmc.h:
-
-../src/ASF/common/services/clock/pll.h:
-
-../src/ASF/common/services/clock/sam4e/pll.h:
-
-../src/ASF/sam/drivers/pio/pio.h:
-
-../src/ASF/sam/drivers/pmc/sleep.h:
-
-../src/ASF/sam/utils/fpu/fpu.h:
-
-../src/ASF/sam/boards/sam4e_xplained_pro/led.h:
-
-../src/ASF/sam/drivers/pio/pio_handler.h:
-
-../src/buttonDriver.h:
-
-../src/FreeRTOS/include/FreeRTOS.h:
-
-../src/FreeRTOSConfig.h:
-
-../src/FreeRTOS/include/projdefs.h:
-
-../src/FreeRTOS/include/portable.h:
-
-../src/FreeRTOS/include/deprecated_definitions.h:
-
-../src/FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h:
-
-../src/FreeRTOS/include/mpu_wrappers.h:
-
-../src/FreeRTOS/include/task.h:
-
-../src/FreeRTOS/include/list.h:
-
-../src/OITExpansionBoardDefines.h:

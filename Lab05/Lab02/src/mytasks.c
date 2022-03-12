@@ -99,27 +99,58 @@ taskUART_RX (void* pvParameters)
 			switch (rx_message)
 			{
 				case '\r':
-				tx_message[0] = '\r';
-				tx_message[1] = '\n';
-				tx_message[2] = '\0';
-				break;
+					tx_message[0] = '\r';
+					tx_message[1] = '\n';
+					tx_message[2] = '\0';
+					break;
 				case '1':
 				case '2':
 				case '3':
-				tx_message[0] = rx_message;
-				tx_message[1] = '\0';
-				xQueueSendToBack(data.led_queue_handle, (void*) &rx_message, (TickType_t) 10);
-				break;
+					tx_message[0] = rx_message;
+					tx_message[1] = '\0';
+					xQueueSendToBack(data.led_queue_handle, (void*) &rx_message, (TickType_t) 10);
+					break;
 				case 'u':
-				strcpy(tx_message, "Michael Kearton");
-				break;
+					strcpy(tx_message, "Michael Kearton");
+					break;
 				default:
-				tx_message[0] = rx_message;
-				tx_message[1] = '\0';
-				break;
+					tx_message[0] = rx_message;
+					tx_message[1] = '\0';
+					break;
 			}
 			
 			xQueueSendToBack(data.uart_tx_queue_handle, (void*) &tx_message, (TickType_t) 10);
+		}
+	}
+}
+
+//
+void taskButtons (void* pvParameters)
+{
+	const struct DataButtons data = *(struct DataButtons*) pvParameters;
+	
+	char tx_message[50];
+	
+	while (FOREVER)
+	{
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+		
+		switch (button_pressed)
+		{
+			case EXT_SW1:
+				strcpy(tx_message, "\r\nHello FreeRTOS World\r\n");
+				xQueueSendToBack(data.uart_tx_queue_handle, (void*) &tx_message, (TickType_t) 10);
+				break;
+			case EXT_SW2:
+				strcpy(tx_message, "\r\nCST 347 – RTOS\r\n");
+				xQueueSendToBack(data.uart_tx_queue_handle, (void*) &tx_message, (TickType_t) 10);
+				break;
+			case EXT_SW3:
+				strcpy(tx_message, "\r\nLab 05 – Interrupts in FreeRTOS\r\n");
+				xQueueSendToBack(data.uart_tx_queue_handle, (void*) &tx_message, (TickType_t) 10);
+				break;
+			default:
+				break;
 		}
 	}
 }
